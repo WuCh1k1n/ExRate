@@ -1,0 +1,10 @@
+<litepal>
+
+    <dbname value="exrate" />
+
+    <version value="1" />
+
+    <list>
+        <mapping class="com.wuch1k1n.exrate.model.Currency" />
+    </list>
+</litepal>
