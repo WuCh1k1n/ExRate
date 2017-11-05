@@ -31,12 +31,13 @@ public class SplashActivity extends AppCompatActivity {
     private static final String APPKEY = "af6aff0c22ed9ada35ee0d74f77b049b";
     private List<Currency> currencies = new ArrayList<>();
     private ProgressDialog progressDialog;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        Handler handler = new Handler();
+        handler = new Handler();
         // 检查网络是否可用
         if (isNetworkConnected(this)) {
             // 获取货币列表
@@ -58,13 +59,18 @@ public class SplashActivity extends AppCompatActivity {
     private void getCurrencyList() {
         currencies = DataSupport.findAll(Currency.class);
         if (currencies.size() > 0) {
-            for(Currency currency:currencies){
+            for (Currency currency : currencies) {
                 // 更新货币兑换美元汇率数据，受API请求次数限制暂不开启
-                // queryCurrencyExrate(currency.getCode());
+                queryCurrencyExrate(currency.getCode());
             }
-            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 3000);
         } else {
             // 向服务器请求货币列表
             queryCurrencyList();

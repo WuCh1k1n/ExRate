@@ -4,4 +4,10 @@
         <attr name="button_icon" format="reference|integer" />
         <attr name="button_text" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="CustomBar">
+        <attr name="left_img" format="reference|integer" />
+        <attr name="text" format="string" />
+        <attr name="right_img" format="reference|integer" />
+    </declare-styleable>
 </resources>

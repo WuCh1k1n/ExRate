@@ -1,8 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00ffff"
-    android:orientation="vertical">
+    android:background="#f5f5f5">
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/iv_top"
+        android:layout_width="match_parent"
+        android:background="@mipmap/line_chart"
+        app:layout_heightPercent="25%" />
+
+    <LinearLayout
+        android:id="@+id/ll_first"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_top"
+        android:layout_marginTop="15dp"
+        android:background="#fff"
+        android:orientation="vertical">
+
+        <com.wuch1k1n.exrate.ui.CustomBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:left_img="@mipmap/ic_comment"
+            app:right_img="@mipmap/ic_arrow_right"
+            app:text="给个好评" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#bfbfbf" />
+
+        <com.wuch1k1n.exrate.ui.CustomBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:left_img="@mipmap/ic_suggest"
+            app:right_img="@mipmap/ic_arrow_right"
+            app:text="意见反馈" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_second"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_first"
+        android:layout_marginTop="15dp"
+        android:background="#fff"
+        android:orientation="vertical">
+
+        <com.wuch1k1n.exrate.ui.CustomBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:left_img="@mipmap/ic_explain"
+            app:right_img="@mipmap/ic_arrow_right"
+            app:text="使用说明" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#bfbfbf" />
+
+        <com.wuch1k1n.exrate.ui.CustomBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:left_img="@mipmap/ic_statement"
+            app:right_img="@mipmap/ic_arrow_right"
+            app:text="免责声明" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#bfbfbf" />
+
+        <com.wuch1k1n.exrate.ui.CustomBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:left_img="@mipmap/ic_we"
+            app:right_img="@mipmap/ic_arrow_right"
+            app:text="关于我们" />
+    </LinearLayout>
+
+
+</android.support.percent.PercentRelativeLayout>
