@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,6 +39,8 @@ public class PagerNews {
     private NewsAdapter newsAdapter;
     private List<News> newsList = new ArrayList<>();
     private ProgressDialog progressDialog;
+    private SharedPreferences pref;
+    private List<News> resultList;
 
     public PagerNews(Context context) {
         mActivity = (Activity) context;
@@ -55,7 +59,20 @@ public class PagerNews {
             }
         });
 
-        queryNews();
+        if (Utility.isNetworkConnected(mActivity)) {
+            // 获取货币列表
+            queryNews();
+        } else {
+            pref = PreferenceManager.getDefaultSharedPreferences(mActivity);
+            String pref_news = pref.getString("news", "");
+            if (!pref_news.isEmpty()) {
+                resultList = Utility.handleNewsListResponse(pref_news);
+                for (News news : resultList) {
+                    newsList.add(news);
+                }
+                newsAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     public View getView() {
@@ -84,7 +101,11 @@ public class PagerNews {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                List<News> resultList = Utility.handleNewsListResponse(responseText);
+                pref = PreferenceManager.getDefaultSharedPreferences(mActivity);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("news", responseText);
+                editor.commit();
+                resultList = Utility.handleNewsListResponse(responseText);
                 for (News news : resultList) {
                     newsList.add(news);
                 }
@@ -99,20 +120,5 @@ public class PagerNews {
                 });
             }
         });
-    }
-
-    private void showProgressDialog() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(mActivity);
-            progressDialog.setMessage("正在加载...");
-            progressDialog.setCanceledOnTouchOutside(false);
-        }
-        progressDialog.show();
-    }
-
-    private void closeProgressDialog() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
     }
 }

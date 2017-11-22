@@ -39,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         handler = new Handler();
         // 检查网络是否可用
-        if (isNetworkConnected(this)) {
+        if (Utility.isNetworkConnected(this)) {
             // 获取货币列表
             getCurrencyList();
         } else {
@@ -154,15 +154,4 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    public boolean isNetworkConnected(Context context) {
-        if (context != null) {
-            ConnectivityManager mConnectivityManager = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-            if (mNetworkInfo != null) {
-                return mNetworkInfo.isAvailable();
-            }
-        }
-        return false;
-    }
 }
