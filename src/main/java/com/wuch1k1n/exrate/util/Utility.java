@@ -3,10 +3,14 @@ package com.wuch1k1n.exrate.util;
 import android.text.TextUtils;
 
 import com.wuch1k1n.exrate.model.Currency;
+import com.wuch1k1n.exrate.model.News;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/10/6.
@@ -57,5 +61,30 @@ public class Utility {
             }
         }
         return false;
+    }
+
+    public static List<News> handleNewsListResponse(String response) {
+        List<News> newsList = new ArrayList<>();
+        if (!TextUtils.isEmpty(response)) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getInt("error_code") == 0) {
+                    JSONObject resultObject = jsonObject.getJSONObject("result");
+                    JSONArray dataArray = resultObject.getJSONArray("data");
+                    for (int i = 0; i < dataArray.length(); i++) {
+                        JSONObject tempObject = dataArray.getJSONObject(i);
+                        News news=new News();
+                        news.setId(tempObject.getString("uniquekey"));
+                        news.setTitle(tempObject.getString("title"));
+                        news.setWebUrl(tempObject.getString("url"));
+                        news.setImageUrl(tempObject.getString("thumbnail_pic_s"));
+                        newsList.add(news);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return newsList;
     }
 }

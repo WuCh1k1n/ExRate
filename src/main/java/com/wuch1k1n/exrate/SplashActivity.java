@@ -61,7 +61,7 @@ public class SplashActivity extends AppCompatActivity {
         if (currencies.size() > 0) {
             for (Currency currency : currencies) {
                 // 更新货币兑换美元汇率数据，受API请求次数限制暂不开启
-                queryCurrencyExrate(currency.getCode());
+                //queryCurrencyExrate(currency.getCode());
             }
             handler.postDelayed(new Runnable() {
                 @Override
