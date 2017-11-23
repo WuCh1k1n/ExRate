@@ -21,6 +21,10 @@ public class News {
      * 网页url
      */
     private String webUrl;
+    /**
+     * 新闻条目是否已读
+     */
+    private Boolean isRead = false;
 
     public String getId() {
         return id;
@@ -52,5 +56,13 @@ public class News {
 
     public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+    }
+
+    public Boolean getRead() {
+        return isRead;
+    }
+
+    public void setRead(Boolean read) {
+        isRead = read;
     }
 }

@@ -52,6 +52,12 @@ public class NewsAdapter extends ArrayAdapter {
 
         Picasso.with(getContext()).load(news.getImageUrl()).fit().into(viewHolder.newsImage);
         viewHolder.newsTitle.setText(news.getTitle());
+        // 已读新闻条目标题高亮显示
+        if (news.getRead()) {
+            viewHolder.newsTitle.setTextColor(getContext().getResources().getColor(R.color.dark_grey));
+        } else {
+            viewHolder.newsTitle.setTextColor(getContext().getResources().getColor(R.color.black));
+        }
         return view;
     }
 
