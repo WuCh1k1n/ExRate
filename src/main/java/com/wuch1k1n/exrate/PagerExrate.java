@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -39,32 +40,39 @@ import okhttp3.Response;
 public class PagerExrate {
 
     private static final String APPKEY = "af6aff0c22ed9ada35ee0d74f77b049b";
+    private static final int BASE_CURRENCY = 0;
+    private static final int TARGET_CURRENCY = 1;
+
     private AppCompatActivity mActivity;
     private View mView;
+    private SharedPreferences pref;
+    private Currency baseCurrency;
+    private SwipeRefreshLayout swipeRefresh;
+
     public CustomEditText et_exrate;
     private FloatingActionButton fab;
-    private Currency baseCurrency;
+
     public static List<Currency> targetCurrencies = new ArrayList<Currency>();
     private ListView lv_target_currency;
     private ExrateAdapter exrateAdapter;
-    private SharedPreferences pref;
-    private static final int BASE_CURRENCY = 0;
-    private static final int TARGET_CURRENCY = 1;
 
     public PagerExrate(Context context) {
         mActivity = (AppCompatActivity) context;
         mView = View.inflate(mActivity, R.layout.layout_exrate, null);
+        pref = mActivity.getSharedPreferences("config", mActivity.MODE_PRIVATE);
+
         et_exrate = (CustomEditText) mView.findViewById(R.id.et_exrate);
         // 取消输入框自动获得焦点
         et_exrate.setFocusable(true);
         et_exrate.setFocusableInTouchMode(true);
+
         fab = (FloatingActionButton) mView.findViewById(R.id.fab_add_currency);
+        swipeRefresh = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_refresh);
 
         lv_target_currency = (ListView) mView.findViewById(R.id.lv_target_currency);
         exrateAdapter = new ExrateAdapter(mActivity, R.layout.exrate_item, targetCurrencies);
         lv_target_currency.setAdapter(exrateAdapter);
 
-        pref = mActivity.getSharedPreferences("config", mActivity.MODE_PRIVATE);
         // 应用是否第一次启动
         Boolean started = pref.getBoolean("started", false);
         if (!started) {
@@ -188,6 +196,17 @@ public class PagerExrate {
                 mActivity.startActivityForResult(intent, 2);
             }
         });
+
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                for (int i = 0; i < targetCurrencies.size(); i++) {
+                    refreshTargetCurrency(targetCurrencies.get(i).getCode(), i);
+                }
+                //swipeRefresh.setRefreshing(false);
+            }
+        });
     }
 
     public View getView() {
@@ -262,7 +281,7 @@ public class PagerExrate {
     }
 
     // 查询该货币兑换美元的汇率
-    public void queryCurrencyExrate(final String code) {
+    public void queryCurrencyExrate(String code) {
         String address = "http://op.juhe.cn/onebox/exchange/currency";
         Map params = new HashMap();// 请求参数
         params.put("key", APPKEY);
@@ -280,6 +299,38 @@ public class PagerExrate {
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 Utility.handleCurrencyExrateResponse(responseText);
+            }
+        });
+    }
+
+    // 更新换算货币金额
+    public void refreshTargetCurrency(String code, final int i) {
+        swipeRefresh.setRefreshing(true);
+        String address = "http://op.juhe.cn/onebox/exchange/currency";
+        Map params = new HashMap();// 请求参数
+        params.put("key", APPKEY);
+        params.put("from", code);
+        params.put("to", "USD");
+        String url = address + "?" + HttpUtil.urlencode(params);
+
+        HttpUtil.sendOkHttpRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Utility.handleCurrencyExrateResponse(responseText);
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        targetCurrencies.get(i).setAfterChange(refreshAfterChange(targetCurrencies.get(i)));
+                        exrateAdapter.notifyDataSetChanged();
+                        swipeRefresh.setRefreshing(false);
+                    }
+                });
             }
         });
     }

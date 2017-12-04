@@ -1,7 +1,5 @@
 <litepal>
-
     <dbname value="exrate" />
-
     <version value="1" />
 
     <list>
